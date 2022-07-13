@@ -96,8 +96,65 @@ class Wp_Nft_Gallery_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-public.js', array( 'jquery' ), $this->version, false );
+		wp_register_script( 'polyfill-IntersectionObserver', 'https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver' );		
+		wp_register_script( 'vue', 'https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.js', array(), null, true );
+		wp_register_script( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@latest/dist/bootstrap-vue.min.js', array(), null, true );
+		wp_register_script( 'bootstrap-vue-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js', array(), null, true );
+		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-public.js', array( 'vue', 'wp-i18n' ), $this->version, true );
 
+		// Define some variables to be used in Vue
+		wp_localize_script( $this->plugin_name, 'nftGallerySettings', array(
+			'site_url' => site_url(),
+			'wp_api_url' => esc_url_raw( rest_url() ),
+			'objkt_endpoint' => get_option( 'nft_gallery_objkt_endpoint_setting' ),
+			'objkt_alias' => get_option( 'nft_gallery_objkt_alias_setting' ),
+		) );
+
+	}
+
+	/**
+	 * Register shortcodes
+	 *
+	 * @since    1.0.0
+	 */
+	function register_shortcodes() {
+
+		// Enqueue registered scripts
+		wp_enqueue_script( 'polyfill-IntersectionObserver' );		
+		wp_enqueue_script( 'vue' );
+		wp_enqueue_script( 'bootstrap-vue' );
+		wp_enqueue_script( 'bootstrap-vue-icons' );
+		wp_enqueue_script( $this->plugin_name );
+
+		add_shortcode( 'nft_gallery', array( $this, 'shortcode_nft_gallery_handler' ) );
+	}
+
+	/**
+	 * Generates the content of the [nft_gallery] shortcode
+	 * 
+	 * @param array $atts Shortcode attributes
+	 * 
+	 * @return string
+	 */
+	function shortcode_nft_gallery_handler( $atts ) {
+
+		$atts = shortcode_atts( array(
+			'limit' => -1, // Maximum number of items to show
+		), $atts, 'nft_gallery' );
+
+		$output = $this->generate_nft_gallery( $atts['limit'] );
+
+		return $output;
+	}
+
+	/**
+	 * Generates the content of the NFT gallery
+	 * 
+	 * @return string
+	 */
+	function generate_nft_gallery( $limit ) {
+		$output = '<div id="nft-gallery"></div>';
+		return $output;
 	}
 
 }
