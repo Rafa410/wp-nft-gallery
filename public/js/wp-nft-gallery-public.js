@@ -127,11 +127,33 @@ const app = new Vue({
             if (response.ok) {
                 const data = await response.json();
                 console.debug('Objkt data: ', data);
-                return data.data.listing;
+                return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
                 console.error('Error fetching items from Objkt API');
                 return [];
             }
+        },
+
+        /**
+         * Find duplicate tokens and leave the one with the lowest price
+         *
+         * @param {array} listing - The listing of tokens from the Objkt API
+         * @returns {array} - The filtered listing of tokens
+         */
+        filterDuplicateObjktTokens(listing) {
+            const tokens = {};
+            const filteredListing = [];
+            listing.forEach((item) => {
+                if (!tokens[item.token.token_id]) {
+                    tokens[item.token.token_id] = item;
+                    filteredListing.push(item);
+                } else {
+                    if (tokens[item.token.token_id].price > item.price) {
+                        tokens[item.token.token_id] = item;
+                    }
+                }
+            });
+            return filteredListing;
         },
     },
 
