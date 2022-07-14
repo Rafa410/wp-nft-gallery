@@ -1,4 +1,63 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+
+.text-soft-light {
+   color: rgba(255, 255, 255, 0.60);
+}
+
+.text-disabled-light {
+   color: rgba(255, 255, 255, 0.38);
+}
+
+.nft-gallery-filters .custom-select {
+   background-color: var(--dark, #000);
+   color: var(--text-light, #fff);
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13.6 9'%3E%3Cpath d='m13.2.3-6.3 8L.4.2' fill='none' stroke='%23fff'/%3E%3C/svg%3E");
+   background-size: 12px 10px;
+   background-position: right 0.55rem center;
+}
+
+.nft-gallery-filters .custom-select:hover, 
+.nft-gallery-filters .custom-select.selected {
+   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nft-gallery-filters .custom-select:focus, 
+.nft-gallery-filters .custom-select:active {
+   box-shadow: 0 0 6px -1px;
+}
+
+.nft-gallery-filters .custom-select > option {
+   background-color: rgba(0, 0, 0, 0.87);
+}
+
+.gallery-item__author {
+   color: #00E5FF;
+}
+
+.gallery-item__image img {
+   width: 100%;
+   aspect-ratio: 400 / 293;
+}
+
+.nft-gallery__token-wrapper {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+   column-gap: 2rem;
+   row-gap: 3rem;
+}
+
+.galler-item__editions {
+   margin-bottom: -0.5rem;
+}
+
+.galler-item__price {
+   margin-top: -0.5rem;
+}
+
+.gallery-item__link .gallery-item__info {
+   transition: background-color 0.2s ease-out;
+}
+
+.gallery-item__link:hover .gallery-item__info, 
+.gallery-item__link:focus .gallery-item__info {
+   background-color: rgba(255, 255, 255, 0.15);
+}
