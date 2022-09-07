@@ -7,6 +7,23 @@
    color: rgba(255, 255, 255, 0.38);
 }
 
+.nft-gallery-wrapper, .nft-gallery-single-wrapper {
+   padding-top: 100px;
+   padding-bottom: 12rem;
+}
+
+.nft-gallery-title {
+   text-transform: uppercase;
+   color: white;
+   font-size: calc(1.525rem + 3.3vw);
+}
+
+@media (min-width: 1200px) {
+   .nft-gallery-title {
+      font-size: 4rem;
+   }
+}
+
 .nft-gallery-filters .custom-select {
    background-color: var(--dark, #000);
    color: var(--text-light, #fff);
@@ -33,9 +50,19 @@
    color: #00E5FF;
 }
 
+.gallery-item__image, .single-token__image {
+   position: relative;
+   box-shadow: 0 0 1px white;
+}
+
+.gallery-item__title {
+   max-width: 85%;
+}
+
 .gallery-item__image img {
    width: 100%;
    aspect-ratio: 400 / 293;
+   object-fit: cover;
 }
 
 .nft-gallery__token-wrapper {
@@ -60,4 +87,57 @@
 .gallery-item__link:hover .gallery-item__info, 
 .gallery-item__link:focus .gallery-item__info {
    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.b-skeleton-animate-wave::after {
+   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent)
+}
+
+.nft-gallery-preview {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+   grid-gap: 0.5rem;
+}
+
+.gallery-item {
+   max-width: min(100%, 80vw);
+}
+
+.img-cover {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.single-token__link {
+
+}
+
+.single-token__link {
+   position: relative;
+   background-color: white;
+   color: var(--text-dark) !important;
+   font-weight: bold;
+   transition: box-shadow 0.3s ease-out;
+}
+
+.single-token__link {
+   position: relative;
+}
+
+.single-token__link::after {
+   content: '';
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   bottom: 0;
+   left: 0;
+   border: 1px solid white;
+   z-index: -1;
+   transition: bottom 0.2s linear, left 0.2s linear;
+}
+
+.single-token__link:where(:hover, :focus)::after {
+   bottom: 6px;
+   left: 6px;
 }

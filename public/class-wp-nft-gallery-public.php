@@ -74,6 +74,7 @@ class Wp_Nft_Gallery_Public {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-nft-gallery-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'bootstrap-vue', 'https://unpkg.com/bootstrap-vue@2.22/dist/bootstrap-vue.min.css' );
 
 	}
 
@@ -98,9 +99,11 @@ class Wp_Nft_Gallery_Public {
 
 		wp_register_script( 'polyfill-IntersectionObserver', 'https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver' );		
 		wp_register_script( 'vue', 'https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.js', array(), null, true );
-		wp_register_script( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@latest/dist/bootstrap-vue.min.js', array(), null, true );
-		wp_register_script( 'bootstrap-vue-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js', array(), null, true );
+		wp_register_script( 'vue-router', 'https://unpkg.com/vue-router@3/dist/vue-router.js', array(), null, true );
+		wp_register_script( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue.min.js', array(), null, true );
+		wp_register_script( 'bootstrap-vue-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue-icons.min.js', array(), null, true );
 		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-public.js', array( 'vue', 'wp-i18n' ), $this->version, true );
+		wp_register_script( $this->plugin_name . '-preview', plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-preview.js', array( 'vue', 'wp-i18n' ), $this->version, true );
 
 		// Define some variables to be used in Vue
 		wp_localize_script( $this->plugin_name, 'nftGallerySettings', array(
@@ -108,6 +111,16 @@ class Wp_Nft_Gallery_Public {
 			'wp_api_url' => esc_url_raw( rest_url() ),
 			'objkt_endpoint' => get_option( 'nft_gallery_objkt_endpoint_setting' ),
 			'objkt_alias' => get_option( 'nft_gallery_objkt_alias_setting' ),
+			'objkt_collection_id' => get_option( 'nft_gallery_objkt_collection_id_setting' ),
+			'summary' => get_field('summary')
+		) );
+
+		wp_localize_script( $this->plugin_name . '-preview', 'nftGallerySettings', array(
+			'site_url' => site_url(),
+			'wp_api_url' => esc_url_raw( rest_url() ),
+			'objkt_endpoint' => get_option( 'nft_gallery_objkt_endpoint_setting' ),
+			'objkt_alias' => get_option( 'nft_gallery_objkt_alias_setting' ),
+			'objkt_collection_id' => get_option( 'nft_gallery_objkt_collection_id_setting' ),
 		) );
 
 	}
@@ -118,15 +131,8 @@ class Wp_Nft_Gallery_Public {
 	 * @since    1.0.0
 	 */
 	function register_shortcodes() {
-
-		// Enqueue registered scripts
-		wp_enqueue_script( 'polyfill-IntersectionObserver' );		
-		wp_enqueue_script( 'vue' );
-		wp_enqueue_script( 'bootstrap-vue' );
-		wp_enqueue_script( 'bootstrap-vue-icons' );
-		wp_enqueue_script( $this->plugin_name );
-
 		add_shortcode( 'nft_gallery', array( $this, 'shortcode_nft_gallery_handler' ) );
+		add_shortcode( 'nft_gallery_preview', array( $this, 'shortcode_nft_gallery_preview_handler' ) );
 	}
 
 	/**
@@ -138,6 +144,14 @@ class Wp_Nft_Gallery_Public {
 	 */
 	function shortcode_nft_gallery_handler( $atts ) {
 
+		// Enqueue registered scripts
+		wp_enqueue_script( 'polyfill-IntersectionObserver' );		
+		wp_enqueue_script( 'vue' );
+		wp_enqueue_script( 'vue-router' );
+		wp_enqueue_script( 'bootstrap-vue' );
+		// wp_enqueue_script( 'bootstrap-vue-icons' );
+		wp_enqueue_script( $this->plugin_name);
+
 		$atts = shortcode_atts( array(
 			'limit' => -1, // Maximum number of items to show
 		), $atts, 'nft_gallery' );
@@ -148,12 +162,50 @@ class Wp_Nft_Gallery_Public {
 	}
 
 	/**
+	 * Generates the content of the [nft_gallery_preview] shortcode
+	 * 
+	 * @param array $atts Shortcode attributes
+	 * 
+	 * @return string
+	 */
+	function shortcode_nft_gallery_preview_handler( $atts ) {
+		
+		// Enqueue registered scripts
+		wp_enqueue_script( 'polyfill-IntersectionObserver' );		
+		wp_enqueue_script( 'vue' );
+		wp_enqueue_script( 'vue-router' );
+		wp_enqueue_script( 'bootstrap-vue' );
+		// wp_enqueue_script( 'bootstrap-vue-icons' );
+		wp_enqueue_script( $this->plugin_name . '-preview'  );
+
+		$atts = shortcode_atts( array(
+			'limit' => -1, // Maximum number of items to show
+		), $atts, 'nft_gallery_preview' );
+
+		$output = $this->generate_nft_gallery_preview( $atts['limit'] );
+
+		return $output;
+	}
+
+	/**
 	 * Generates the content of the NFT gallery
 	 * 
 	 * @return string
 	 */
 	function generate_nft_gallery( $limit ) {
-		$output = '<div id="nft-gallery"></div>';
+		$page_id = get_the_ID();
+		$output = '<div id="nft-gallery" data-page-id="' . $page_id . '"></div>';
+		return $output;
+	}
+
+	/**
+	 * Generates the content of the NFT gallery preview
+	 * 
+	 * @return string
+	 */
+	function generate_nft_gallery_preview( $limit ) {
+		$page_id = get_the_ID();
+		$output = '<div id="nft-gallery-preview" data-page-id="' . $page_id . '"></div>';
 		return $output;
 	}
 

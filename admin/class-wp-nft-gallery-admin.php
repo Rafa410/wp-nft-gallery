@@ -202,7 +202,6 @@ class Wp_Nft_Gallery_Admin {
 			'subtype'   => 'text',
 			'id'    => 'nft_gallery_objkt_alias_setting',
 			'name'      => 'nft_gallery_objkt_alias_setting',
-			'required' => true,
 			'get_options_list' => '',
 			'value_type' => 'normal',
 			'wp_data' => 'option'
@@ -218,6 +217,31 @@ class Wp_Nft_Gallery_Admin {
 		register_setting(
 			'nft_gallery_objkt_settings',
 			'nft_gallery_objkt_alias_setting'
+		);
+
+		// Objkt collection ID
+		unset($args);
+		$args = array (
+			'type'      => 'input',
+			'subtype'   => 'text',
+			'id'    => 'nft_gallery_objkt_collection_id_setting',
+			'name'      => 'nft_gallery_objkt_collection_id_setting',
+			'required' => true,
+			'get_options_list' => '',
+			'value_type' => 'normal',
+			'wp_data' => 'option'
+		);
+		add_settings_field(
+			'nft_gallery_objkt_collection_id_setting',
+			__( 'Objkt collection ID', 'nft-gallery' ),
+			array( $this, 'render_settings_field' ),
+			'nft_gallery_objkt_settings',
+			'nft_gallery_objkt_section',
+			$args
+		);
+		register_setting(
+			'nft_gallery_objkt_settings',
+			'nft_gallery_objkt_collection_id_setting'
 		);
 
 		// Objkt endpoint
