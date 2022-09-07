@@ -130,6 +130,13 @@ const SingleToken = {
                     this.item.thumbnail_uri.split('/').pop())
             );
         },
+        artifact_url() {
+            return (
+                this.ipfs_url +
+                (this.item.token?.artifact_uri.split('/').pop() ||
+                    this.item.artifact_uri.split('/').pop())
+            );
+        },
         token_link() {
             return (
                 '//objkt.com/asset/' +
@@ -137,6 +144,10 @@ const SingleToken = {
                 '/' +
                 (this.item.token?.token_id || this.item.token_id)
             );
+        },
+
+        token_type() {
+            return mime_map[this.item.token?.mime || this.item.mime] || 'image';
         },
     },
 
@@ -302,8 +313,7 @@ const SingleToken = {
         },
 
         refreshScrolltrigger() {
-            console.log('refresh scrolltrigger', window.ScrollTrigger);
-            window.ScrollTrigger.refresh();
+            window.ScrollTrigger?.refresh();
         },
     },
 
@@ -316,13 +326,35 @@ const SingleToken = {
         <div v-if="Object.keys(item).length > 0" class="nft-gallery-single-wrapper container">
             <div class="row">
                 <div class="col-md-5">
-                    <div class="single-token__image">
+
+                    <div v-if="token_type === 'video'" class="single-token__video">
+                        <b-embed
+                            type="video"
+                            :src="artifact_url"
+                            :poster="thumbnail_url"
+                            :alt="item.token?.name || item.name"
+                        ></b-embed>
+                    </div>
+
+                    <div v-else-if="token_type === 'model'" class="single-token__model">
+                        <model-viewer 
+                            :src="artifact_url"
+                            :poster="thumbnail_url"
+                            :alt="item.token?.name || item.name"
+                            ar ar-modes="webxr scene-viewer quick-look" 
+                            environment-image="neutral" 
+                            auto-rotate camera-controls>
+                        </model-viewer>
+                    </div>
+
+                    <div v-else class="single-token__image">
                         <div v-if="isImgLoading" class="position-absolute w-100 h-100">
                             <b-skeleton-img animation="fade" aspect="1:1"></b-skeleton-img>
                             <b-skeleton-img aspect="1:1"></b-skeleton-img>
                         </div>
                         <b-img-lazy v-bind="imgProps" :src="thumbnail_url" :alt="item.token?.name" @load.native="onLoad"></b-img-lazy>
                     </div>
+
                 </div>
                 <div class="col-md-7">
                     <h1 class="single-token__title">{{ item.token?.name || item.name }}</h1>

@@ -102,6 +102,7 @@ class Wp_Nft_Gallery_Public {
 		wp_register_script( 'vue-router', 'https://unpkg.com/vue-router@3/dist/vue-router.js', array(), null, true );
 		wp_register_script( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue.min.js', array(), null, true );
 		wp_register_script( 'bootstrap-vue-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue-icons.min.js', array(), null, true );
+		wp_register_script( 'model-viewer', 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js', array(), null, true );
 		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-public.js', array( 'vue', 'wp-i18n' ), $this->version, true );
 		wp_register_script( $this->plugin_name . '-preview', plugin_dir_url( __FILE__ ) . 'js/wp-nft-gallery-preview.js', array( 'vue', 'wp-i18n' ), $this->version, true );
 
@@ -123,6 +124,18 @@ class Wp_Nft_Gallery_Public {
 			'objkt_collection_id' => get_option( 'nft_gallery_objkt_collection_id_setting' ),
 		) );
 
+		add_filter( 'script_loader_tag', array( $this, 'add_script_type_module' ) , 10, 3 );
+
+	}
+
+	function add_script_type_module( $tag, $handle, $src ) {
+		// if not your script, do nothing and return original $tag
+		if ( 'model-viewer' !== $handle ) {
+			return $tag;
+		}
+		// change the script tag by adding type="module" and return it.
+		$tag = '<script type="module" src="' . esc_url( $src ) . '"></script>';
+		return $tag;
 	}
 
 	/**
@@ -150,6 +163,7 @@ class Wp_Nft_Gallery_Public {
 		wp_enqueue_script( 'vue-router' );
 		wp_enqueue_script( 'bootstrap-vue' );
 		// wp_enqueue_script( 'bootstrap-vue-icons' );
+		wp_enqueue_script( 'model-viewer' );
 		wp_enqueue_script( $this->plugin_name);
 
 		$atts = shortcode_atts( array(
@@ -176,6 +190,7 @@ class Wp_Nft_Gallery_Public {
 		wp_enqueue_script( 'vue-router' );
 		wp_enqueue_script( 'bootstrap-vue' );
 		// wp_enqueue_script( 'bootstrap-vue-icons' );
+		wp_enqueue_script( 'model-viewer' );
 		wp_enqueue_script( $this->plugin_name . '-preview'  );
 
 		$atts = shortcode_atts( array(
