@@ -95,8 +95,14 @@
 
 .nft-gallery-preview {
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
    grid-gap: 0.5rem;
+}
+
+@media (min-width: 992px) {
+   .nft-gallery-preview {
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+   }
 }
 
 .gallery-item {
