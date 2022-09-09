@@ -150,7 +150,10 @@ Vue.component('nft-gallery-preview', {
 
             const query = `query GetTokens($collectionId: String!, $limit: Int!) {
                 token(
-                    where: {fa_contract: {_eq: $collectionId}},
+                    where: {
+                        fa_contract: { _eq: $collectionId },
+                        supply: { _gt: "0" },
+                    },
                     limit: $limit,
                 ) {
                     token_id

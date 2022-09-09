@@ -519,7 +519,12 @@ const NftGallery = {
             console.debug('Objkt collection ID: ', collectionId);
 
             const query = `query GetTokens($collectionId: String!) {
-                token(where: {fa_contract: {_eq: $collectionId}}) {
+                token(
+                    where: {
+                        fa_contract: { _eq: $collectionId },
+                        supply: { _gt: "0" }
+                    },
+                ) {
                     fa_contract
                     token_id
                     name
