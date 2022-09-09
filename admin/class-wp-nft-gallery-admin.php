@@ -298,7 +298,7 @@ class Wp_Nft_Gallery_Admin {
 		);
 		add_settings_field(
 			'nft_gallery_objkt_endpoint_setting',
-			__( 'Objkt endpoint', 'nft-gallery' ),
+			__( 'Objkt endpoint *', 'nft-gallery' ),
 			array( $this, 'render_settings_field' ),
 			'nft_gallery_objkt_settings',
 			'nft_gallery_objkt_section',
