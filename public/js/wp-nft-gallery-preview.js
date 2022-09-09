@@ -30,6 +30,9 @@ Vue.component('nft-gallery-preview', {
         objktCollectionId() {
             return nftGallerySettings.objkt_collection_id;
         },
+        previewLimit() {
+            return parseInt(nftGallerySettings.preview_limit);
+        },
     },
 
     methods: {
@@ -46,9 +49,15 @@ Vue.component('nft-gallery-preview', {
                     console.log(this.objktAlias);
                     console.log(this.objktCollectionId);
                     if (this.objktAlias) {
-                        items = await this.getItemsFromObjktByAlias(this.objktAlias);
+                        items = await this.getItemsFromObjktByAlias(
+                            this.objktAlias,
+                            this.previewLimit
+                        );
                     } else if (this.objktCollectionId) {
-                        items = await this.getItemsFromObjktByCollectionId(this.objktCollectionId);
+                        items = await this.getItemsFromObjktByCollectionId(
+                            this.objktCollectionId,
+                            this.previewLimit
+                        );
                     } else {
                         console.warn('No alias or collection ID specified');
                     }
@@ -63,16 +72,20 @@ Vue.component('nft-gallery-preview', {
         /**
          * Load the items from the Objkt GraphQL API by Alias
          *
+         * @param {string} alias - The alias of the collection to load items from
+         * @param {number} limit - The number of items to load
+         *
          */
-        async getItemsFromObjktByAlias(alias) {
+        async getItemsFromObjktByAlias(alias, limit) {
             console.debug('Objkt endpoint: ', this.objktEndpoint);
             console.debug('Objkt alias: ', alias);
 
-            const query = `query GetTokens($alias: String!) {
+            const query = `query GetTokens($alias: String!, $limit: Int!) {
                 listing(
                     where: {
                         status: { _eq: "active" }, 
                         token: { creators: { holder: { alias: { _eq: $alias } } } },
+                        limit: $limit,
                     },
                     order_by: { token: { timestamp: desc } }
                 ) {
@@ -108,7 +121,7 @@ Vue.component('nft-gallery-preview', {
                 },
                 body: JSON.stringify({
                     query,
-                    variables: { alias },
+                    variables: { alias, limit },
                 }),
             });
 
@@ -125,15 +138,21 @@ Vue.component('nft-gallery-preview', {
         /**
          * Load the items from the Objkt GraphQL API by Collection ID
          *
+         * @param {string} collectionId - The collection ID to load items from
+         * @param {number} limit - The number of items to load
+         *
          * @todo Check if token status is active
          *
          */
-        async getItemsFromObjktByCollectionId(collectionId) {
+        async getItemsFromObjktByCollectionId(collectionId, limit) {
             console.debug('Objkt endpoint: ', this.objktEndpoint);
             console.debug('Objkt collection ID: ', collectionId);
 
-            const query = `query GetTokens($collectionId: String!) {
-                token(where: {fa_contract: {_eq: $collectionId}}) {
+            const query = `query GetTokens($collectionId: String!, $limit: Int!) {
+                token(
+                    where: {fa_contract: {_eq: $collectionId}},
+                    limit: $limit,
+                ) {
                     token_id
                     name
                     description
@@ -163,7 +182,7 @@ Vue.component('nft-gallery-preview', {
                 },
                 body: JSON.stringify({
                     query,
-                    variables: { collectionId },
+                    variables: { collectionId, limit },
                 }),
             });
 

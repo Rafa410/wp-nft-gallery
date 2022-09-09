@@ -24,4 +24,12 @@
 		?>
 		<?php submit_button(); ?>
 	</form>
+	<form method="POST" action="options.php" class="card">
+		<h3><?= __( 'Gallery preview', 'nft-gallery' ) ?></h3>
+		<?php
+			settings_fields( 'nft_gallery_preview_settings' );
+			do_settings_sections( 'nft_gallery_preview_settings' );
+		?>
+		<?php submit_button(); ?>
+	</form>
 </div>

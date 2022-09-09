@@ -122,6 +122,7 @@ class Wp_Nft_Gallery_Public {
 			'objkt_endpoint' => get_option( 'nft_gallery_objkt_endpoint_setting' ),
 			'objkt_alias' => get_option( 'nft_gallery_objkt_alias_setting' ),
 			'objkt_collection_id' => get_option( 'nft_gallery_objkt_collection_id_setting' ),
+			'preview_limit' => get_option( 'nft_gallery_preview_limit_setting' ),
 		) );
 
 		add_filter( 'script_loader_tag', array( $this, 'add_script_type_module' ) , 10, 3 );
