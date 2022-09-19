@@ -182,6 +182,44 @@ class Wp_Nft_Gallery_Admin {
 	public function register_and_build_fields() {
 
 		/**
+		 * Gallery preview settings
+		 */
+		add_settings_section(
+			// ID used to identify this section and with which to register options
+			'nft_gallery_preview_settings_section',
+			// Title to be displayed on the administration page
+			'',
+			// Callback used to render the description of the section
+			array( $this, 'display_gallery_preview_description' ),
+			// Page on which to add this section of options
+			'nft_gallery_preview_settings'
+		);
+
+		// Preview limit
+		$args = array(
+			'type'              => 'input',
+			'subtype'           => 'number',
+			'id'                => 'nft_gallery_preview_limit_setting',
+			'name'              => 'nft_gallery_preview_limit_setting',
+			'get_options_list' => '',
+			'value_type' => 'normal',
+			'wp_data' => 'option',
+			'default_value' => 12,
+		);
+		add_settings_field(
+			'nft_gallery_preview_limit_setting',
+			__( 'Number of items to show', 'nft-gallery' ),
+			array( $this, 'render_settings_field' ),
+			'nft_gallery_preview_settings',
+			'nft_gallery_preview_settings_section',
+			$args
+		);
+		register_setting(
+			'nft_gallery_preview_settings',
+			'nft_gallery_preview_limit_setting'
+		);
+
+		/**
 		 * Objkt settings section
 		 */
 		add_settings_section(
@@ -202,7 +240,6 @@ class Wp_Nft_Gallery_Admin {
 			'subtype'   => 'text',
 			'id'    => 'nft_gallery_objkt_alias_setting',
 			'name'      => 'nft_gallery_objkt_alias_setting',
-			'required' => true,
 			'get_options_list' => '',
 			'value_type' => 'normal',
 			'wp_data' => 'option'
@@ -218,6 +255,31 @@ class Wp_Nft_Gallery_Admin {
 		register_setting(
 			'nft_gallery_objkt_settings',
 			'nft_gallery_objkt_alias_setting'
+		);
+
+		// Objkt collection ID
+		unset($args);
+		$args = array (
+			'type'      => 'input',
+			'subtype'   => 'text',
+			'id'    => 'nft_gallery_objkt_collection_id_setting',
+			'name'      => 'nft_gallery_objkt_collection_id_setting',
+			'required' => true,
+			'get_options_list' => '',
+			'value_type' => 'normal',
+			'wp_data' => 'option'
+		);
+		add_settings_field(
+			'nft_gallery_objkt_collection_id_setting',
+			__( 'Objkt collection ID', 'nft-gallery' ),
+			array( $this, 'render_settings_field' ),
+			'nft_gallery_objkt_settings',
+			'nft_gallery_objkt_section',
+			$args
+		);
+		register_setting(
+			'nft_gallery_objkt_settings',
+			'nft_gallery_objkt_collection_id_setting'
 		);
 
 		// Objkt endpoint
@@ -236,7 +298,7 @@ class Wp_Nft_Gallery_Admin {
 		);
 		add_settings_field(
 			'nft_gallery_objkt_endpoint_setting',
-			__( 'Objkt endpoint', 'nft-gallery' ),
+			__( 'Objkt endpoint *', 'nft-gallery' ),
 			array( $this, 'render_settings_field' ),
 			'nft_gallery_objkt_settings',
 			'nft_gallery_objkt_section',
@@ -250,6 +312,13 @@ class Wp_Nft_Gallery_Admin {
 	}
 
 	/**
+	 * Display the Gallery preview settings description
+	 */
+	function display_gallery_preview_description() {
+		echo '<p>' . __( 'Customization options for the gallery preview', 'nft-gallery' ) . '</p>';
+	}
+
+	/**
 	 * Display the Objkt settings description
 	 * 
 	 * @since 1.0.0
@@ -257,6 +326,7 @@ class Wp_Nft_Gallery_Admin {
 	function display_objkt_description() {
 		echo '<p>' . __( 'These options are used to connect to the Objkt API.', 'nft-gallery' ) . '</p>';
 	}
+
 
 	/**
 	 * Render the settings field
