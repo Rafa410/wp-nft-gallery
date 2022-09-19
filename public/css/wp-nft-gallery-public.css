@@ -1,10 +1,10 @@
 
 .text-soft-light {
-   color: rgba(255, 255, 255, 0.60);
+   color: rgba(255, 255, 255, 0.60) !important;
 }
 
 .text-disabled-light {
-   color: rgba(255, 255, 255, 0.38);
+   color: rgba(255, 255, 255, 0.38) !important;
 }
 
 .nft-gallery-wrapper, .nft-gallery-single-wrapper {
@@ -146,4 +146,21 @@
 .single-token__link:where(:hover, :focus)::after {
    bottom: 6px;
    left: 6px;
+}
+
+.btn.btn-icon {
+   display: inline-flex;
+   align-items: center;
+   gap: 0.5rem;
+   font-size: 0.9375rem;
+   color: rgba(255, 255, 255, 0.60);
+}
+
+.btn.btn-icon:hover, .btn.btn-icon:focus {
+   color: white;
+}
+
+.btn-icon > svg {
+   width: 20px;
+   height: auto;
 }
