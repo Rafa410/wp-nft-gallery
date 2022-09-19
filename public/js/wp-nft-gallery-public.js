@@ -1,5 +1,8 @@
 const { __, _x, _n, _nx, sprintf } = wp.i18n;
 
+const siteUrl = nftGallerySettings.site_url;
+const wpApiUrl = nftGallerySettings.wp_api_url;
+
 const mountEl = document.querySelector('#nft-gallery');
 
 const objktCurrencies = {
@@ -46,6 +49,39 @@ const mime_map = {
     // INTERACTIVE
     interactive: 'interactive',
     'application/x-directory': 'interactive',
+};
+
+const mime_map_ext = {
+    // AUDIO
+    'audio/mpeg': 'mp3',
+    'audio/ogg': 'ogg',
+    'audio/wav': 'wav',
+
+    // IMAGE
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+
+    // GIF
+    'image/gif': 'gif',
+
+    // SVG
+    'image/svg+xml': 'svg',
+
+    // VIDEO
+    'video/mp4': 'mp4',
+    'video/webm': 'webm',
+    'video/ogg': 'ogg',
+    'video/quicktime': 'mov',
+
+    // PDF
+    'application/pdf': 'pdf',
+
+    // TEXT
+    'text/plain': 'txt',
+    'text/markdown': 'md',
+
+    // MODEL
+    'model/gltf-binary': 'glb',
 };
 
 const DateFormatOptions = {
@@ -123,6 +159,9 @@ const SingleToken = {
             return nftGallerySettings.objkt_endpoint;
         },
         thumbnail_url() {
+            return `${siteUrl}/wp-content/uploads/nft-gallery/${this.collection_id}/${this.token_id}-thumbnail.jpg`;
+        },
+        thumbnail_url_ipfs() {
             // return `https://source.unsplash.com/random/7200x7200/?nft&sig=${this.item.token?.token_id}`;
             return (
                 this.ipfs_url +
@@ -131,6 +170,12 @@ const SingleToken = {
             );
         },
         artifact_url() {
+            // Use mime_map_ext and token.mime to get the file extension
+            return `${siteUrl}/wp-content/uploads/nft-gallery/${this.collection_id}/${
+                this.token_id
+            }.${mime_map_ext[this.item.token?.mime || this.item.mime]}`;
+        },
+        artifact_url_ipfs() {
             return (
                 this.ipfs_url +
                 (this.item.token?.artifact_uri.split('/').pop() ||
@@ -334,6 +379,7 @@ const SingleToken = {
                             :src="artifact_url"
                             :poster="thumbnail_url"
                             :alt="item.token?.name || item.name"
+                            controls
                         ></b-embed>
                     </div>
 
@@ -353,7 +399,13 @@ const SingleToken = {
                             <b-skeleton-img animation="fade" aspect="1:1"></b-skeleton-img>
                             <b-skeleton-img aspect="1:1"></b-skeleton-img>
                         </div>
-                        <b-img-lazy v-bind="imgProps" :src="thumbnail_url" :alt="item.token?.name" @load.native="onLoad"></b-img-lazy>
+                        <b-img-lazy 
+                            v-bind="imgProps" 
+                            :src="artifact_url" 
+                            :alt="item.token?.name" 
+                            @load.native="onLoad"
+                            @error.native="if (this.src != artifact_url_ipfs) { this.src = artifact_url_ipfs; }">
+                        </b-img-lazy>
                     </div>
 
                 </div>
@@ -414,12 +466,6 @@ const NftGallery = {
     },
 
     computed: {
-        siteUrl() {
-            return nftGallerySettings.site_url;
-        },
-        wpApiUrl() {
-            return nftGallerySettings.wp_api_url;
-        },
         objktEndpoint() {
             return nftGallerySettings.objkt_endpoint;
         },
@@ -894,6 +940,9 @@ Vue.component('gallery-item', {
             return this.item.price !== undefined ? this.item.price / 1000000 : '-';
         },
         thumbnail_url() {
+            return `${siteUrl}/wp-content/uploads/nft-gallery/${this.item.fa_contract}/${this.item.token_id}-thumbnail.jpg`;
+        },
+        thumbnail_url_ipfs() {
             // return `https://source.unsplash.com/random/400x293/?nft&sig=${
             //     this.item.token?.token_id || this.item.token_id
             // }`;
@@ -934,7 +983,13 @@ Vue.component('gallery-item', {
                     <div v-if="isImgLoading" class="position-absolute w-100 h-100">
                         <b-skeleton-img aspect="400:293"></b-skeleton-img>
                     </div>
-                    <b-img-lazy v-bind="imgProps" :src="thumbnail_url" :alt="item.token?.name || item.name" @load.native="isImgLoading = false"></b-img-lazy>
+                    <b-img-lazy 
+                        v-bind="imgProps" 
+                        :src="thumbnail_url" 
+                        :alt="item.token?.name || item.name" 
+                        @load.native="isImgLoading = false"
+                        @error.native="if (this.src != thumbnail_url_ipfs) { this.src = thumbnail_url_ipfs; }">
+                    </b-img-lazy>
                 </div>
                 <div class="gallery-item__info d-flex flex-column p-2">
                     <span class="galler-item__editions text-right text-soft-light">{{ item.token?.supply || item.supply }}x</span>
