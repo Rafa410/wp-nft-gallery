@@ -13,4 +13,9 @@
  */
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<div class="wrap">
+	<h2><?= __( 'NFT Gallery', 'nft-gallery' ) ?></h2>
+    <br>
+    <a class="button button-primary" href="<?= admin_url( 'admin.php?page=wp-nft-gallery-settings' ) ?>"><?= __( 'Settings', 'nft-gallery' ) ?></a>
+</div>
+
