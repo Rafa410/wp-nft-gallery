@@ -9,7 +9,13 @@
 
 .nft-gallery-wrapper, .nft-gallery-single-wrapper {
    padding-top: 100px;
-   padding-bottom: 12rem;
+   padding-bottom: calc(75vmax - 25vmin);
+}
+   
+@media (min-width: 768px) {
+   .nft-gallery-wrapper, .nft-gallery-single-wrapper {
+      padding-bottom: 15rem;
+   }
 }
 
 .nft-gallery-title {
@@ -63,6 +69,12 @@
    width: 100%;
    aspect-ratio: 400 / 293;
    object-fit: cover;
+}
+
+@media (max-width: 991.98px) {
+   .single-token__title {
+      margin-top: 1rem;
+   }
 }
 
 .nft-gallery__token-wrapper {

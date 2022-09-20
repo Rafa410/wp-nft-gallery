@@ -303,14 +303,14 @@ const SingleToken = {
                     artifact_uri
                     mime
                     tags {
-                    tag {
-                        name
-                    }
+                        tag {
+                            name
+                        }
                     }
                     creators {
-                    holder {
-                        alias
-                    }
+                        holder {
+                            alias
+                        }
                     }
                 }
             }`;
@@ -371,7 +371,7 @@ const SingleToken = {
         <div class="nft-gallery-single-wrapper container">
 
             <div class="row" v-if="Object.keys(item).length > 0">
-                <div class="col-md-5">
+                <div class="col-lg-5">
 
                     <div v-if="token_type === 'video'" class="single-token__video">
                         <b-embed
@@ -409,7 +409,7 @@ const SingleToken = {
                     </div>
 
                 </div>
-                <div class="col-md-7">
+                <div class="col-lg-7">
                     <h1 class="single-token__title">{{ item.token?.name || item.name }}</h1>
                     <p class="single-token__author">{{ __( 'by', 'nft-gallery' ) }} {{ author || item.creators[0]?.holder.alias }}</p>
                     <p class="single-token__timestamp">{{ (item.token?.timestamp || item.timestamp) | formatDate }}</p>
