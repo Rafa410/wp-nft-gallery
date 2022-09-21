@@ -294,6 +294,9 @@ Vue.component('gallery-item', {
             );
         },
         thumbnail_url() {
+            return `${siteUrl}/wp-content/uploads/nft-gallery/${this.item.fa_contract}/${this.item.token_id}-thumbnail.jpg`;
+        },
+        thumbnail_url_ipfs() {
             // return `https://source.unsplash.com/random/400x293/?nft&sig=${
             //     this.item.token?.token_id || this.item.token_id
             // }`;
@@ -304,6 +307,14 @@ Vue.component('gallery-item', {
             );
         },
     },
+    methods: {
+        onImgError(event) {
+            const img = event.target;
+            if (img.src !== this.thumbnail_url_ipfs) {
+                img.src = this.thumbnail_url_ipfs;
+            }
+        },
+    },
     template: `
         <div class="gallery-item">
             <div class="gallery-item__image">
@@ -311,7 +322,14 @@ Vue.component('gallery-item', {
                     <div v-if="isImgLoading" class="position-absolute w-100 h-100">
                         <b-skeleton-img aspect="400:293" class="img-cover"></b-skeleton-img>
                     </div>
-                    <b-img-lazy class="img-cover" v-bind="imgProps" :src="thumbnail_url" :alt="item.token?.name || item.name" @load.native="isImgLoading = false"></b-img-lazy>
+                    <b-img-lazy 
+                        class="img-cover" 
+                        v-bind="imgProps" 
+                        :src="thumbnail_url" 
+                        :alt="item.token?.name || item.name" 
+                        @load.native="isImgLoading = false"
+                        @error.native="onImgError($event)">
+                    </b-img-lazy>
                 </b-link>
             </div>
         </div>

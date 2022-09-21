@@ -360,6 +360,16 @@ const SingleToken = {
         refreshScrolltrigger() {
             window.ScrollTrigger?.refresh();
         },
+
+        /**
+         * Replace the img src with the default IPFS URL if the image fails to load
+         */
+        onImgError(event) {
+            const img = event.target;
+            if (img.src !== this.artifact_url_ipfs) {
+                img.src = this.artifact_url_ipfs;
+            }
+        },
     },
 
     async created() {
@@ -404,7 +414,7 @@ const SingleToken = {
                             :src="artifact_url" 
                             :alt="item.token?.name" 
                             @load.native="onLoad"
-                            @error.native="if (this.src != artifact_url_ipfs) { this.src = artifact_url_ipfs; }">
+                            @error.native="onImgError($event)">
                         </b-img-lazy>
                     </div>
 
@@ -972,6 +982,16 @@ Vue.component('gallery-item', {
             return linkTo;
         },
     },
+
+    methods: {
+        onImgError(event) {
+            const img = event.target;
+            if (img.src !== this.thumbnail_url_ipfs) {
+                img.src = this.thumbnail_url_ipfs;
+            }
+        },
+    },
+
     template: `
         <article class="gallery-item">
             <b-link 
@@ -988,7 +1008,7 @@ Vue.component('gallery-item', {
                         :src="thumbnail_url" 
                         :alt="item.token?.name || item.name" 
                         @load.native="isImgLoading = false"
-                        @error.native="if (this.src != thumbnail_url_ipfs) { this.src = thumbnail_url_ipfs; }">
+                        @error.native="onImgError($event)">
                     </b-img-lazy>
                 </div>
                 <div class="gallery-item__info d-flex flex-column p-2">
