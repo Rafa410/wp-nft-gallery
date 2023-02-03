@@ -194,6 +194,14 @@ const SingleToken = {
         token_type() {
             return mime_map[this.item.token?.mime || this.item.mime] || 'image';
         },
+
+        currency() {
+            return objktCurrencies[this.item.currency_id || 1] || '';
+        },
+
+        price() {
+            return this.item.price !== undefined ? this.item.price / 1000000 : '-';
+        },
     },
 
     methods: {
@@ -313,6 +321,18 @@ const SingleToken = {
                         }
                     }
                 }
+                listing(
+                    where: {
+                        fa_contract: { _eq: $collectionId}, 
+                        token: { token_id: { _eq: $tokenId } } 
+                    }
+                ) {
+                    id
+                    price
+                    amount
+                    currency_id
+                    status
+                }
             }`;
 
             const response = await fetch(this.objktEndpoint, {
@@ -330,11 +350,24 @@ const SingleToken = {
             if (response.ok) {
                 const data = await response.json();
                 console.debug('Objkt data: ', data);
-                return data.data.token[0];
-                // return this.filterDuplicateObjktTokens(data.data.listing);
+                return this.mergeListingWithToken(data.data.token[0], data.data.listing[0]);
             } else {
                 console.error('Error fetching item from Objkt API');
                 return [];
+            }
+        },
+
+        /**
+         *
+         */
+        mergeListingWithToken(token, listing) {
+            if (listing && listing.price) {
+                return {
+                    ...token,
+                    price: listing.price,
+                };
+            } else {
+                return token;
             }
         },
 
@@ -424,8 +457,10 @@ const SingleToken = {
                     <p class="single-token__author">{{ __( 'by', 'nft-gallery' ) }} {{ author || item.creators[0]?.holder.alias }}</p>
                     <p class="single-token__timestamp">{{ (item.token?.timestamp || item.timestamp) | formatDate }}</p>
                     <p class="single-token__description">{{ item.token?.description || item.description }}</p>
-                    <div class="single-token__purchase_info">
-                        <span class="single-token__price">{{ item.price }}</span>
+                    <div class="single-token__purchase_info my-2">
+                        <span v-if="price !== '-'" class="single-token__price fs-5 mr-3">
+                            {{ price }} <crypto :currency="currency" type="symbol"></crypto>
+                        </span>
                         <span class="single-token__amount_left small">{{ item.supply }}x</span>
                     </div>
                     <a :href="token_link" target="_blank" rel="noopener noreferrer" class="single-token__link btn btn-lg btn-light-glitched text-uppercase my-3">
@@ -1015,7 +1050,7 @@ Vue.component('gallery-item', {
                     <span class="galler-item__editions text-right text-soft-light">{{ item.token?.supply || item.supply }}x</span>
                     <h2 class="gallery-item__title h5 fw-bold text-light  p-0">{{ item.token?.name || item.name }}</h2>
                     <span class="gallery-item__author">{{ author }}</span>
-                    <span class="gallery-item__price text-right text-soft-light">
+                    <span class="gallery-item__price d-none text-right text-soft-light">
                         {{ price }} <crypto :currency="currency" type="symbol"></crypto>
                     </span>
                 </div>
