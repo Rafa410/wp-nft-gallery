@@ -74,7 +74,7 @@ class Wp_Nft_Gallery_Public {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-nft-gallery-public.css', array(), $this->version, 'all' );
-		wp_enqueue_style( 'bootstrap-vue', 'https://unpkg.com/bootstrap-vue@2.22/dist/bootstrap-vue.min.css' );
+		wp_enqueue_style( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.23.1/dist/bootstrap-vue.min.css' );
 
 	}
 
@@ -99,7 +99,7 @@ class Wp_Nft_Gallery_Public {
 
 		wp_register_script( 'polyfill-IntersectionObserver', 'https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver' );		
 		wp_register_script( 'vue', 'https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.js', array(), null, true );
-		wp_register_script( 'vue-router', 'https://unpkg.com/vue-router@3/dist/vue-router.js', array(), null, true );
+		wp_register_script( 'vue-router', 'https://cdn.jsdelivr.net/npm/vue-router@3.6/dist/vue-router.min.js', array(), null, true );
 		wp_register_script( 'bootstrap-vue', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue.min.js', array(), null, true );
 		wp_register_script( 'bootstrap-vue-icons', 'https://cdn.jsdelivr.net/npm/bootstrap-vue@2.22/dist/bootstrap-vue-icons.min.js', array(), null, true );
 		wp_register_script( 'model-viewer', 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js', array(), null, true );
