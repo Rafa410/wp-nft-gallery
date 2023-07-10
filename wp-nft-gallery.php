@@ -13,9 +13,9 @@
  * @package           Wp_Nft_Gallery
  *
  * @wordpress-plugin
- * Plugin Name:       NFT Gallery
+ * Plugin Name:       NFT Gallery (Time-Lapse migration)
  * Plugin URI:        https://github.com/Rafa410/wp-nft-gallery
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Vue-based gallery to showcase digital art from marketplaces like Objkt on your WordPress site.
  * Version:           1.0.1
  * Author:            La Tempesta
  * Author URI:        https://latempesta.cc/eng.html
