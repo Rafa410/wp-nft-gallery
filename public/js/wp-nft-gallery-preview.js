@@ -43,8 +43,6 @@ Vue.component('nft-gallery-preview', {
             let items = [];
             switch (marketplace) {
                 case 'Objkt':
-                    console.log(this.objktAlias);
-                    console.log(this.objktCollectionId);
                     if (this.objktAlias) {
                         items = await this.getItemsFromObjktByAlias(
                             this.objktAlias,
@@ -60,7 +58,9 @@ Vue.component('nft-gallery-preview', {
                     }
                     break;
                 default:
-                    console.warn(`Selected marketplace "${marketplace}" not supported`);
+                    console.warn(
+                        `Selected marketplace "${marketplace}" not supported`
+                    );
                     break;
             }
             return items;
@@ -74,9 +74,6 @@ Vue.component('nft-gallery-preview', {
          *
          */
         async getItemsFromObjktByAlias(alias, limit) {
-            console.debug('Objkt endpoint: ', this.objktEndpoint);
-            console.debug('Objkt alias: ', alias);
-
             const query = `query GetTokens($alias: String!, $limit: Int!) {
                 listing(
                     where: {
@@ -124,7 +121,6 @@ Vue.component('nft-gallery-preview', {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
                 return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
                 console.error('Error fetching items from Objkt API');
@@ -142,9 +138,6 @@ Vue.component('nft-gallery-preview', {
          *
          */
         async getItemsFromObjktByCollectionId(collectionId, limit) {
-            console.debug('Objkt endpoint: ', this.objktEndpoint);
-            console.debug('Objkt collection ID: ', collectionId);
-
             const query = `query GetTokens($collectionId: String!, $limit: Int!) {
                 token(
                     where: {
@@ -189,8 +182,6 @@ Vue.component('nft-gallery-preview', {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
-                console.log(data);
                 return data.data.token;
                 // return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
@@ -289,17 +280,18 @@ Vue.component('gallery-item', {
         },
         author() {
             return (
-                this.item.token?.creators.map((creator) => creator.holder.alias).join(', ') ||
-                this.item.creators.map((creator) => creator.holder.alias).join(', ')
+                this.item.token?.creators
+                    .map((creator) => creator.holder.alias)
+                    .join(', ') ||
+                this.item.creators
+                    .map((creator) => creator.holder.alias)
+                    .join(', ')
             );
         },
         thumbnail_url() {
             return `${siteUrl}/wp-content/uploads/nft-gallery/${this.item.fa_contract}/${this.item.token_id}-thumbnail.jpg`;
         },
         thumbnail_url_ipfs() {
-            // return `https://source.unsplash.com/random/400x293/?nft&sig=${
-            //     this.item.token?.token_id || this.item.token_id
-            // }`;
             return (
                 this.ipfs_url +
                 (this.item.token?.thumbnail_uri.split('/').pop() ||

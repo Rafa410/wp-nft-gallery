@@ -171,9 +171,11 @@ const SingleToken = {
         },
         artifact_url() {
             // Use mime_map_ext and token.mime to get the file extension
-            return `${siteUrl}/wp-content/uploads/nft-gallery/${this.collection_id}/${
-                this.token_id
-            }.${mime_map_ext[this.item.token?.mime || this.item.mime]}`;
+            return `${siteUrl}/wp-content/uploads/nft-gallery/${
+                this.collection_id
+            }/${this.token_id}.${
+                mime_map_ext[this.item.token?.mime || this.item.mime]
+            }`;
         },
         artifact_url_ipfs() {
             return (
@@ -200,7 +202,9 @@ const SingleToken = {
         },
 
         price() {
-            return this.item.price !== undefined ? this.item.price / 1000000 : '-';
+            return this.item.price !== undefined
+                ? this.item.price / 1000000
+                : '-';
         },
     },
 
@@ -216,7 +220,9 @@ const SingleToken = {
             switch (marketplace) {
                 case 'Objkt':
                     if (this.listing_id) {
-                        item = await this.getItemFromObjktByListingId(this.listing_id);
+                        item = await this.getItemFromObjktByListingId(
+                            this.listing_id
+                        );
                     } else if (this.collection_id && this.token_id) {
                         item = await this.getItemFromObjktByTokenId(
                             this.collection_id,
@@ -227,7 +233,9 @@ const SingleToken = {
                     }
                     break;
                 default:
-                    console.warn(`Selected marketplace "${marketplace}" not supported`);
+                    console.warn(
+                        `Selected marketplace "${marketplace}" not supported`
+                    );
                     break;
             }
             return item;
@@ -283,7 +291,6 @@ const SingleToken = {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
                 return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
                 console.error('Error fetching item from Objkt API');
@@ -349,8 +356,10 @@ const SingleToken = {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
-                return this.mergeListingWithToken(data.data.token[0], data.data.listing[0]);
+                return this.mergeListingWithToken(
+                    data.data.token[0],
+                    data.data.listing[0]
+                );
             } else {
                 console.error('Error fetching item from Objkt API');
                 return [];
@@ -384,8 +393,6 @@ const SingleToken = {
         },
 
         onLoad($event) {
-            console.log('isImgLoading: ', this.isImgLoading);
-            console.log('image loaded', $event);
             this.isImgLoading = false;
             this.refreshScrolltrigger();
         },
@@ -483,7 +490,6 @@ const SingleToken = {
         </div>
     `,
     beforeRouteUpdate(to, from, next) {
-        console.log('beforeRouteUpdate', to, from);
         // react to route changes...
         next();
     },
@@ -534,18 +540,22 @@ const NftGallery = {
             let items = [];
             switch (marketplace) {
                 case 'Objkt':
-                    console.log(this.objktAlias);
-                    console.log(this.objktCollectionId);
                     if (this.objktAlias) {
-                        items = await this.getItemsFromObjktByAlias(this.objktAlias);
+                        items = await this.getItemsFromObjktByAlias(
+                            this.objktAlias
+                        );
                     } else if (this.objktCollectionId) {
-                        items = await this.getItemsFromObjktByCollectionId(this.objktCollectionId);
+                        items = await this.getItemsFromObjktByCollectionId(
+                            this.objktCollectionId
+                        );
                     } else {
                         console.warn('No alias or collection ID specified');
                     }
                     break;
                 default:
-                    console.warn(`Selected marketplace "${marketplace}" not supported`);
+                    console.warn(
+                        `Selected marketplace "${marketplace}" not supported`
+                    );
                     break;
             }
             return items;
@@ -556,9 +566,6 @@ const NftGallery = {
          *
          */
         async getItemsFromObjktByAlias(alias) {
-            console.debug('Objkt endpoint: ', this.objktEndpoint);
-            console.debug('Objkt alias: ', alias);
-
             const query = `query GetTokens($alias: String!) {
                 listing(
                     where: {
@@ -605,7 +612,6 @@ const NftGallery = {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
                 return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
                 console.error('Error fetching items from Objkt API');
@@ -620,9 +626,6 @@ const NftGallery = {
          *
          */
         async getItemsFromObjktByCollectionId(collectionId) {
-            console.debug('Objkt endpoint: ', this.objktEndpoint);
-            console.debug('Objkt collection ID: ', collectionId);
-
             const query = `query GetTokens($collectionId: String!) {
                 token(
                     where: {
@@ -666,8 +669,6 @@ const NftGallery = {
 
             if (response.ok) {
                 const data = await response.json();
-                console.debug('Objkt data: ', data);
-                console.log(data);
                 return data.data.token;
                 // return this.filterDuplicateObjktTokens(data.data.listing);
             } else {
@@ -858,9 +859,18 @@ Vue.component('gallery-filter', {
         getCollections() {
             return [
                 { value: null, text: __('Select collection', 'nft-gallery') },
-                { value: 'collection-1', text: __('Collection 1', 'nft-gallery') },
-                { value: 'collection-2', text: __('Collection 2', 'nft-gallery') },
-                { value: 'collection-3', text: __('Collection 3', 'nft-gallery') },
+                {
+                    value: 'collection-1',
+                    text: __('Collection 1', 'nft-gallery'),
+                },
+                {
+                    value: 'collection-2',
+                    text: __('Collection 2', 'nft-gallery'),
+                },
+                {
+                    value: 'collection-3',
+                    text: __('Collection 3', 'nft-gallery'),
+                },
             ];
         },
 
@@ -878,7 +888,10 @@ Vue.component('gallery-filter', {
                 { value: 'svg', text: __('SVG', 'nft-gallery') },
                 { value: 'model', text: __('Model', 'nft-gallery') },
                 { value: 'video', text: __('video', 'nft-gallery') },
-                { value: 'interactive', text: __('Interactive', 'nft-gallery') },
+                {
+                    value: 'interactive',
+                    text: __('Interactive', 'nft-gallery'),
+                },
                 { value: 'pdf', text: __('PDF', 'nft-gallery') },
                 { value: 'text', text: __('Text', 'nft-gallery') },
             ];
@@ -975,15 +988,21 @@ Vue.component('gallery-item', {
         },
         author() {
             return (
-                this.item.token?.creators.map((creator) => creator.holder.alias).join(', ') ||
-                this.item.creators.map((creator) => creator.holder.alias).join(', ')
+                this.item.token?.creators
+                    .map((creator) => creator.holder.alias)
+                    .join(', ') ||
+                this.item.creators
+                    .map((creator) => creator.holder.alias)
+                    .join(', ')
             );
         },
         currency() {
             return objktCurrencies[this.item.currency_id || 1] || '';
         },
         price() {
-            return this.item.price !== undefined ? this.item.price / 1000000 : '-';
+            return this.item.price !== undefined
+                ? this.item.price / 1000000
+                : '-';
         },
         thumbnail_url() {
             return `${siteUrl}/wp-content/uploads/nft-gallery/${this.item.fa_contract}/${this.item.token_id}-thumbnail.jpg`;
@@ -1012,7 +1031,10 @@ Vue.component('gallery-item', {
             } else {
                 linkTo = {
                     name: 'single-token',
-                    params: { collection_id: this.item.fa_contract, token_id: this.item.token_id },
+                    params: {
+                        collection_id: this.item.fa_contract,
+                        token_id: this.item.token_id,
+                    },
                 };
             }
             return linkTo;
@@ -1118,11 +1140,9 @@ const app = new Vue({
             },
             on: {
                 selectItem: (item) => {
-                    console.log('on selectItem', item);
                     this.currentItem = item;
                 },
                 'select-item': (item) => {
-                    console.log('on select-item', item);
                     this.currentItem = item;
                 },
             },
