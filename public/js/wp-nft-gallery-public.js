@@ -503,6 +503,7 @@ const NftGallery = {
 
     data() {
         return {
+            title: nftGallerySettings.title,
             summary: nftGallerySettings.summary,
             items: [],
             isLoading: true,
@@ -706,7 +707,7 @@ const NftGallery = {
     template: `
         <section class="nft-gallery-wrapper container">
             <header>
-                <h1 class="nft-gallery-title">{{ __( 'NFT Gallery', 'nft-gallery' ) }}</h1>
+                <h1 class="nft-gallery-title">{{ title }}</h1>
             </header>
             <div class="nft-gallery-summary" v-html="summary"></div>
             <div class="nft-gallery">
